@@ -61,19 +61,22 @@ def after_create_regions(world: World, multiworld: MultiWorld, player: int):
             locations_to_remove = []
 
             for location in list(region.locations):
+                # skip any locations with no categories
                 location_categories = world.location_name_to_location[location.name].get("category", [])
 
                 if not location_categories:
                     continue
 
+                # skip any locations that aren't associated with a specific gen
                 has_generation_categories = [cat for cat in location_categories if cat in generations.values()]
 
                 if not has_generation_categories:
                     continue
             
-                has_any_generations_included = len(list(set(location_categories).intersection(set(world.options.generations_to_include.value)))) > 0
+                # check if the location's category list has any matches with the gens that were chosen
+                matching_generations = list(set(location_categories).intersection(set(world.options.generations_to_include.value)))
 
-                if not has_any_generations_included:
+                if not matching_generations:
                     locations_to_remove.append(location)
 
             for location in locations_to_remove:
@@ -94,16 +97,19 @@ def before_create_items_all(item_config: dict[str, int|dict], world: World, mult
 def before_create_items_starting(item_pool: list, world: World, multiworld: MultiWorld, player: int) -> list:
     if world.options.generations_to_include:
         for item in item_pool:
+            # skip any items with no categories
             item_categories = world.item_name_to_item[item.name].get("category", [])
 
             if not item_categories:
                 continue
 
+            # skip any items that aren't associated with a specific gen
             has_generation_categories = [cat for cat in item_categories if cat in generations.values()]
 
             if not has_generation_categories:
                 continue
 
+            # check if the location's category list has any matches with the gens that were chosen
             matching_generations = list(set(item_categories).intersection(set(world.options.generations_to_include.value)))
 
             if not matching_generations:

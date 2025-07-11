@@ -27,9 +27,6 @@ class GenerationsToInclude(OptionList):
        By default, all generations/region names are included."""
     display_name = "Generations/Region Names to Include"
 
-class RegionNameToggle(DefaultOnToggle):
-    display_name = "Region Name Toggle"
-    visibility = Visibility.none
 
 # This is called before any manual options are defined, in case you want to define your own with a clean slate or let Manual define over them
 def before_options_defined(options: dict[str, Type[Option[Any]]]) -> dict[str, Type[Option[Any]]]:
@@ -39,7 +36,8 @@ def before_options_defined(options: dict[str, Type[Option[Any]]]) -> dict[str, T
 
     for gen in generations.values():
         option_key = f"include_{gen.lower()}"
-        options[option_key] = RegionNameToggle
+        options[option_key] = DefaultOnToggle
+        options[option_key].visibility = Visibility.none
 
     return options
 
