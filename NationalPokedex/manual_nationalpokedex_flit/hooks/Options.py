@@ -23,8 +23,12 @@ from .collections import generations
 
 
 class GenerationsToInclude(OptionList):
-    """The generations (or region names) to include; e.g., "Kalos", "Gen4", etc. (In this example, "Gen4" and "Sinnoh" mean the same thing.)
-       By default, all generations/region names are included."""
+    """The generations (or region names) to include; e.g., 
+        ["Gen1", "Hoenn"]
+       
+    (In this example, "Gen1" and "Kanto" mean the same thing.)
+       
+    If you specify no generations/region names here, all generations/region names are included."""
     display_name = "Generations/Region Names to Include"
 
 
