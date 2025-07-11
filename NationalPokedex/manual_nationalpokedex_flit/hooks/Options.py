@@ -1,9 +1,9 @@
 # Object classes from AP that represent different types of options that you can create
-from Options import Option, FreeText, NumericOption, Toggle, DefaultOnToggle, Choice, TextChoice, Range, NamedRange, OptionGroup, PerGameCommonOptions
+from Options import Option, FreeText, NumericOption, Toggle, DefaultOnToggle, Choice, TextChoice, Range, NamedRange, OptionGroup, PerGameCommonOptions, OptionList, Visibility
 # These helper methods allow you to determine if an option has been set, or what its value is, for any player in the multiworld
 from ..Helpers import is_option_enabled, get_option_value
 from typing import Type, Any
-
+from .collections import generations
 
 ####################################################################
 # NOTE: At the time that options are created, Manual has no concept of the multiworld or its own world.
@@ -22,18 +22,25 @@ from typing import Type, Any
 #####################################################################
 
 
-# To add an option, use the before_options_defined hook below and something like this:
-#   options["total_characters_to_win_with"] = TotalCharactersToWinWith
-#
-class TotalCharactersToWinWith(Range):
-    """Instead of having to beat the game with all characters, you can limit locations to a subset of character victory locations."""
-    display_name = "Number of characters to beat the game with before victory"
-    range_start = 10
-    range_end = 50
-    default = 50
+class GenerationsToInclude(OptionList):
+    """The generations (or region names) to include; e.g., "Kalos", "Gen4", etc. (In this example, "Gen4" and "Sinnoh" mean the same thing.)
+       By default, all generations/region names are included."""
+    display_name = "Generations/Region Names to Include"
+
+class RegionNameToggle(DefaultOnToggle):
+    display_name = "Region Name Toggle"
+    visibility = Visibility.none
 
 # This is called before any manual options are defined, in case you want to define your own with a clean slate or let Manual define over them
 def before_options_defined(options: dict[str, Type[Option[Any]]]) -> dict[str, Type[Option[Any]]]:
+    options.update({
+        "generations_to_include": GenerationsToInclude
+    })
+
+    for gen in generations.values():
+        option_key = f"include_{gen.lower()}"
+        options[option_key] = RegionNameToggle
+
     return options
 
 # This is called after any manual options are defined, in case you want to see what options are defined or want to modify the defined options
@@ -55,3 +62,4 @@ def before_option_groups_created(groups: dict[str, list[Type[Option[Any]]]]) -> 
 
 def after_option_groups_created(groups: list[OptionGroup]) -> list[OptionGroup]:
     return groups
+

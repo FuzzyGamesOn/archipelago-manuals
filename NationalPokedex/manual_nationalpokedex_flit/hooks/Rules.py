@@ -1,9 +1,20 @@
 from typing import Optional
 from worlds.AutoWorld import World
-from ..Helpers import clamp, get_items_with_value
+from ..Helpers import clamp, get_items_with_value, get_option_value
 from BaseClasses import MultiWorld, CollectionState
 
 import re
+
+
+# Check that a generation has been completed or is not included
+def genComplete(multiworld: MultiWorld, player: int, genRegionName: str):
+    # if this gen wasn't included, this requirement is not needed, so return true
+    if not get_option_value(multiworld, player, f"include_{genRegionName.lower()}"):
+        return True
+
+    # ... otherwise, return the require string for that region's category
+    return f"|@{genRegionName}:all|"
+
 
 # Sometimes you have a requirement that is just too messy or repetitive to write out with boolean logic.
 # Define a function here, and you can use it in a requires string with {function_name()}.

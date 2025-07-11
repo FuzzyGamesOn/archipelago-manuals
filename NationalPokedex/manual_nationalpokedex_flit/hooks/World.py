@@ -29,6 +29,7 @@ import logging
 ## The fill_slot_data method will be used to send data to the Manual client for later use, like deathlink.
 ########################################################################################
 
+from .collections import generations
 
 
 # Use this function to change the valid filler items to be created to replace item links or starting items.
@@ -38,20 +39,45 @@ def hook_get_filler_item_name(world: World, multiworld: MultiWorld, player: int)
 
 # Called before regions and locations are created. Not clear why you'd want this, but it's here. Victory location is included, but Victory event is not placed yet.
 def before_create_regions(world: World, multiworld: MultiWorld, player: int):
-    pass
+    # get the option value and remove any invalid values before checking whether to use it
+    generations_to_include = world.options.generations_to_include.value or []
+    generations_to_include = [gen for gen in generations_to_include if gen in generations.keys() or gen in generations.values()]
+
+    if generations_to_include:
+        # standardize the region name list in the option value (for later reuse) to match category names
+        world.options.generations_to_include.value = [generations[gen] if gen in generations.keys() else gen for gen in generations_to_include]
+
+        # disable the category options for gens that aren't included in the list
+        for gen in generations.values():
+            if gen not in world.options.generations_to_include.value:
+                setattr(getattr(world.options, f"include_{gen.lower()}"), "value", False)
 
 # Called after regions and locations are created, in case you want to see or modify that information. Victory location is included.
 def after_create_regions(world: World, multiworld: MultiWorld, player: int):
-    # Use this hook to remove locations from the world
-    locationNamesToRemove: list[str] = [] # List of location names
+    if world.options.generations_to_include:
+        my_regions = [region for region in multiworld.regions if region.player == player]
 
-    # Add your code here to calculate which locations to remove
+        for region in my_regions:
+            locations_to_remove = []
 
-    for region in multiworld.regions:
-        if region.player == player:
             for location in list(region.locations):
-                if location.name in locationNamesToRemove:
-                    region.locations.remove(location)
+                location_categories = world.location_name_to_location[location.name].get("category", [])
+
+                if not location_categories:
+                    continue
+
+                has_generation_categories = [cat for cat in location_categories if cat in generations.values()]
+
+                if not has_generation_categories:
+                    continue
+            
+                has_any_generations_included = len(list(set(location_categories).intersection(set(world.options.generations_to_include.value)))) > 0
+
+                if not has_any_generations_included:
+                    locations_to_remove.append(location)
+
+            for location in locations_to_remove:
+                region.locations.remove(location)
 
 # This hook allows you to access the item names & counts before the items are created. Use this to increase/decrease the amount of a specific item in the pool
 # Valid item_config key/values:
@@ -66,6 +92,23 @@ def before_create_items_all(item_config: dict[str, int|dict], world: World, mult
 
 # The item pool before starting items are processed, in case you want to see the raw item pool at that stage
 def before_create_items_starting(item_pool: list, world: World, multiworld: MultiWorld, player: int) -> list:
+    if world.options.generations_to_include:
+        for item in item_pool:
+            item_categories = world.item_name_to_item[item.name].get("category", [])
+
+            if not item_categories:
+                continue
+
+            has_generation_categories = [cat for cat in item_categories if cat in generations.values()]
+
+            if not has_generation_categories:
+                continue
+
+            matching_generations = list(set(item_categories).intersection(set(world.options.generations_to_include.value)))
+
+            if not matching_generations:
+                item_pool.remove(item)
+
     return item_pool
 
 # The item pool after starting items are processed but before filler is added, in case you want to see the raw item pool at that stage

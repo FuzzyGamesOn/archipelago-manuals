@@ -6,39 +6,48 @@
   "starting_items": [
     {
       "item_categories": ["Kanto"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_kanto"]
     },
     {
       "item_categories": ["Johto"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_johto"]
     },
     {
       "item_categories": ["Hoenn"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_hoenn"]
     },
     {
       "item_categories": ["Sinnoh"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_sinnoh"]
     },
     {
       "item_categories": ["Unova"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_unova"]
     },
     {
       "item_categories": ["Kalos"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_kalos"]
     },
     {
       "item_categories": ["Alola"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_alola"]
     },
     {
       "item_categories": ["Galar"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_galar"]
     },
     {
       "item_categories": ["Paldea"],
-      "random": 3
+      "random": 3,
+      "yaml_option": ["include_paldea"]
     }
   ],
   "death_link": false

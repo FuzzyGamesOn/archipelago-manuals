@@ -241,3 +241,4 @@ def make_options_group() -> list[OptionGroup]:
 
 manual_options_data = make_dataclass('ManualOptionsClass', manual_options.items(), bases=(PerGameCommonOptions,))
 after_options_defined(manual_options_data)
+

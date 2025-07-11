@@ -1092,6 +1092,6 @@
         "name": "National Pokedex Complete!",
         "victory": true,
         "category": ["Pokedex Complete!"],
-        "requires": "|@Kanto:all| AND |@Johto:all| AND |@Hoenn:all| AND |@Sinnoh:all| AND |@Unova:all| AND |@Kalos:all| AND |@Alola:all| AND |@Galar:all| AND |@Hisui:all| AND |@Paldea:all|"
+        "requires": "{genComplete(Kanto)} AND {genComplete(Johto)} AND {genComplete(Hoenn)} AND {genComplete(Sinnoh)} AND {genComplete(Unova) AND {genComplete(Kalos)} AND {genComplete(Alola)} AND {genComplete(Galar)} AND {genComplete(Hisui)} AND {genComplete(Paldea)}"
     }
 ]
